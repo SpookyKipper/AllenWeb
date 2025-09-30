@@ -2,6 +2,7 @@
 /xhost/dash
 /cache
 /setting/config/*.php
+/setting/menu/*.php
 /vendor
 web.config
 Thumbs.db
