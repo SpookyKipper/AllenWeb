@@ -1,0 +1,3 @@
+[submodule "xhost/dash"]
+	path = xhost/dash
+	url = https://github.com/Xhost-tw/Xhost-Dash
