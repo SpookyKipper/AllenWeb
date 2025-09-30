@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../../../../../main.php';
-
 use Allen\Basic\Util\Config;
 ?>
 <link rel="stylesheet" href="https://cdn.asallenshih.tw/style/<?= Config::Get('web.start.link.web_style', 'allen') ?>.css">

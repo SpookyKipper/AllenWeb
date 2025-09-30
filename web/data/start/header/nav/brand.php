@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/../../../../../../main.php';
-
 use Allen\Basic\Util\Language;
 use Allen\Basic\Util\Config;
 ?>
