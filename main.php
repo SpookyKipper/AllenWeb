@@ -15,3 +15,8 @@ spl_autoload_register(function ($class) {
 		require_once $file . '/main.php';
 	}
 });
+array_map(function ($type) {
+	if (!function_exists('allen_' . $type)) {
+		require_once __DIR__ . '/' . $type . '.php';
+	}
+}, ['button', 'code', 'json', 'list', 'share', 'url']);
