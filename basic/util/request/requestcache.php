@@ -4,6 +4,7 @@ namespace Allen\Basic\Util\Request;
 
 use Allen\Basic\Util\Cache;
 use Allen\Basic\Util\Request;
+use CurlHandle;
 
 class RequestCache extends Request
 {
@@ -20,7 +21,7 @@ class RequestCache extends Request
 			}
 		}
 	}
-	protected function _CurlEnd(\CurlHandle $ch): array
+	protected function _CurlEnd(CurlHandle $ch): array
 	{
 		if ($this->cache !== null && $this->cache_class->IsValid() === true) {
 			return $this->cache;

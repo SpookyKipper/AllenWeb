@@ -72,7 +72,7 @@ class Request
 	{
 		$ch = $this->_CurlStart();
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		return self::_CurlEnd($ch);
+		return $this->_CurlEnd($ch);
 	}
 	/**
 	 * 執行 POST 請求
@@ -84,7 +84,7 @@ class Request
 		$ch = $this->_CurlStart();
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		return self::_CurlEnd($ch);
+		return $this->_CurlEnd($ch);
 	}
 	/**
 	 * 執行 PUT 請求
@@ -96,7 +96,7 @@ class Request
 		$ch = $this->_CurlStart();
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		return self::_CurlEnd($ch);
+		return $this->_CurlEnd($ch);
 	}
 	/**
 	 * 初始化 Curl 請求
@@ -124,7 +124,7 @@ class Request
 	 * @param CurlHandle $ch
 	 * @return array{code: int, response: mixed, header: array<string, string[]>}
 	 */
-	protected static function _CurlEnd(CurlHandle $ch): array
+	protected function _CurlEnd(CurlHandle $ch): array
 	{
 		$headers = [];
 		curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$headers) {
