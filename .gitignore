@@ -1,0 +1,7 @@
+/api
+/cache
+/setting/config/*.php
+/vendor
+web.config
+Thumbs.db
+.DS_Store
