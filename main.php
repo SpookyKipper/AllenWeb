@@ -17,6 +17,6 @@ spl_autoload_register(function ($class) {
 });
 array_map(function ($type) {
 	if (!function_exists('allen_' . $type)) {
-		require_once __DIR__ . '/' . $type . '.php';
+		require_once __DIR__ . '/basic/allen/' . $type . '.php';
 	}
 }, ['button', 'code', 'json', 'list', 'share', 'url']);
