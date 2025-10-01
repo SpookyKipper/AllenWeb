@@ -23,18 +23,18 @@ class Language
 			$lang_support = self::GetSupport();
 			if (!empty($lang_support)) {
 				if (isset($_REQUEST['lang'])) {
-					if (!is_string($_REQUEST['lang']) || $_REQUEST['lang'] === 'zh-Hant-TW' || !self::Set($_REQUEST['lang'])) {
+					if (!is_string($_REQUEST['lang']) || $_REQUEST['lang'] === Config::Get('util.language.default', 'zh-Hant-TW') || !self::Set($_REQUEST['lang'])) {
 						$uri = Uri::Parse($_SERVER['REQUEST_URI']);
 						header('Location: ' . $uri->RemoveQuery('lang')->Get());
 						die();
 					}
+				} else if (in_array(Config::Get('util.language.default', 'zh-Hant-TW'), $lang_support)) {
+					self::Set(Config::Get('util.language.default', 'zh-Hant-TW'));
 				} else {
-					if (in_array('zh-Hant-TW', $lang_support)) {
-						self::Set('zh-Hant-TW');
-					} else {
-						self::Set($lang_support[array_key_first($lang_support)]);
-					}
+					self::Set($lang_support[array_key_first($lang_support)]);
 				}
+			} else {
+				self::Set(Config::Get('util.language.default', 'zh-Hant-TW'));
 			}
 		}
 		return self::$lang;
@@ -60,7 +60,7 @@ class Language
 		$lang_support = array_values(array_intersect($langs, array_keys(self::LANGS)));
 		if (empty($lang_support)) {
 			$lang_support = [
-				'zh-Hant-TW',
+				Config::Get('util.language.default', 'zh-Hant-TW'),
 			];
 		}
 		self::$lang_support = $lang_support;

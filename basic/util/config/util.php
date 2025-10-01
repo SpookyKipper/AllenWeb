@@ -2,6 +2,7 @@
 
 use Allen\Basic\Util\{Config, ConfigType};
 
+Config::SetType('util.language.default', ConfigType::String);
 Config::SetType('util.db.default.type', ConfigType::String);
 Config::SetType('util.db.default.host', ConfigType::String);
 Config::SetType('util.db.default.name', ConfigType::String);
