@@ -1,4 +1,5 @@
 /api
+/id
 /xhost/dash
 /cache
 /setting/config/*.php
