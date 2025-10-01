@@ -8,9 +8,6 @@ $folders = [
 foreach ($folders as $folder) {
 	if (!is_dir(__DIR__ . '/' . $folder)) {
 		continue;
-	} else if (!is_dir(__DIR__ . '/' . $folder . '/.git')) {
-		echo "Folder $folder is not a git repository, skipping." . PHP_EOL;
-		continue;
 	}
 	echo "Pulling in folder: $folder" . PHP_EOL;
 	chdir(__DIR__ . '/' . $folder);
