@@ -100,4 +100,11 @@ class Language
 		}
 		return $data[array_key_first($data)];
 	}
+	public static function YearOffset(): int
+	{
+		return match (self::Get()) {
+			'zh-Hant-TW' => 1911,
+			default => 0,
+		};
+	}
 }

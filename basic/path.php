@@ -15,4 +15,8 @@ class Path
 	{
 		return self::Root(path: Config::Get('path.cache', 'cache') . '/' . $path);
 	}
+	public static function Setting(string $path = ''): string
+	{
+		return self::Root(path: Config::Get('path.setting', 'setting') . '/' . $path);
+	}
 }

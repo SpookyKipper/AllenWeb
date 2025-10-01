@@ -1,5 +1,5 @@
 <?php
-function allen_share(string $url = null, string $text = null)
+function allen_share(?string $url = null, ?string $text = null)
 {
 	$url = $url ?? ('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 	$share = [

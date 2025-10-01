@@ -1,6 +1,6 @@
 <?php
-use Allen\Basic\Util\Config;
+use Allen\Basic\Util\{Config, Language};
 ?>
 <div>
-	<p>&copy;<?= date('Y') - 1911 ?> <?= Config::Get('web.end.author', 'AS_Allen_Shih') ?></p>
+	<p>&copy;<?= date('Y') - Language::YearOffset() ?> <?= Config::Get('web.end.author', 'AS_Allen_Shih') ?></p>
 </div>
