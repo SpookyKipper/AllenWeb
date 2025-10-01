@@ -2,7 +2,7 @@
 
 namespace Allen\Basic\Util;
 
-class AllenAPP
+class APP
 {
 	const USER_AGENT = [
 		'AllenAPP',

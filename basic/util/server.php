@@ -16,4 +16,13 @@ class Server
 		if (is_null($domain)) return null;
 		return array_reverse(explode('.', $domain));
 	}
+	public static function GetHeaders(): array
+	{
+		return getallheaders() ?: [];
+	}
+	public static function GetHeader(string $name): ?string
+	{
+		$headers = self::GetHeaders();
+		return $headers[$name] ?? null;
+	}
 }

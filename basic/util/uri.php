@@ -2,6 +2,8 @@
 
 namespace Allen\Basic\Util;
 
+use Allen\Basic\Util\{Config, Language};
+
 class Uri
 {
 	protected ?string $protocol = null;
@@ -180,5 +182,20 @@ class Uri
 			isset($parsed['query']) ? self::ParseQuery($parsed['query']) : null,
 			$parsed['fragment'] ?? null
 		);
+	}
+	/**
+	 * 修改連結網址
+	 */
+	public static function Link(string $url, bool $lang = false): string
+	{
+		$uri = self::Parse($url);
+		if ($lang) {
+			if (Language::Get() === Config::Get('util.language.default', 'zh-Hant-TW')) {
+				$uri = $uri->RemoveQuery('lang');
+			} else {
+				$uri = $uri->AddQuery('lang', Language::Get());
+			}
+		}
+		return $uri->Get();
 	}
 }

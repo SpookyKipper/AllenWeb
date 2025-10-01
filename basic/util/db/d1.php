@@ -6,7 +6,7 @@ use RenokiCo\L1\{D1\Pdo\D1Pdo, CloudflareD1Connector};
 
 class D1 extends D1Pdo
 {
-	public function __construct(string|null $name = null, string|null $user = null, string|null $pass = null)
+	public function __construct(?string $name = null, ?string $user = null, ?string $pass = null)
 	{
 		parent::__construct(
 			dsn: 'sqlite::memory:',

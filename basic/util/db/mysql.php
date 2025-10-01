@@ -6,7 +6,7 @@ use PDO;
 
 class MySQL extends PDO
 {
-	public function __construct(string $host, string $name, string|null $user = null, string|null $pass = null, array $options = [])
+	public function __construct(string $host, string $name, ?string $user = null, ?string $pass = null, array $options = [])
 	{
 		parent::__construct(
 			'mysql:host=' . $host . ';dbname=' . $name . ';charset=utf8mb4',
