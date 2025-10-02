@@ -28,7 +28,13 @@ use Allen\Basic\Util\{Config, Language};
 	</main>
 	<hr>
 	<footer>
-		<p>收到電子郵件時，請注意「寄件人」、「超連結開啟後所屬網域拼字」，以免受騙。<br>超連結的網域可能因為電子郵件追蹤而改變，請以網頁載入後畫面為準。</p>
+		<p><?= Language::Output([
+				'zh-Hant-TW' => '收到電子郵件時，請注意「寄件人」、「超連結開啟後所屬網域拼字」，以免受騙。',
+				'en-US' => 'When receiving an email, please pay attention to the "sender" and the "domain spelling after opening the hyperlink" to avoid being deceived.',
+			]) ?><br><?= Language::Output([
+							'zh-Hant-TW' => '超連結的網域可能因為電子郵件追蹤而改變，請以網頁載入後畫面為準。',
+							'en-US' => 'The domain of the hyperlink may change due to email tracking, please refer to the page after loading.',
+						]) ?></p>
 		<p>&copy; <?= date('Y') - Language::YearOffset() ?> <?= Config::Get('web.end.author', 'AS_Allen_Shih') ?></p>
 	</footer>
 	<style>
