@@ -196,7 +196,7 @@ class Uri
 				$uri = $uri->AddQuery('lang', Language::Get());
 			}
 		}
-		$result = $uri->Get();
+		$result = $uri->Get() ?? '';
 		if ($querySlash) {
 			$result = str_replace(['%2F'], '/', $result);
 		}
