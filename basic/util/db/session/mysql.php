@@ -1,6 +1,6 @@
 <?php
 
-namespace Allen\Util\Db\Session;
+namespace Allen\Basic\Util\Db\Session;
 
 use Exception;
 use SessionHandlerInterface;

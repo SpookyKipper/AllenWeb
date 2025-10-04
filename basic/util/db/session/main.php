@@ -1,11 +1,11 @@
 <?php
 
-namespace Allen\Util\Db;
+namespace Allen\Basic\Util\Db;
 
 use Exception;
 use Allen\Basic\Util\Db;
 use Allen\Basic\Util\Db\MySQL as DbMySQL;
-use Allen\Util\Db\Session\MySQL;
+use Allen\Basic\Util\Db\Session\MySQL;
 
 class Session
 {
