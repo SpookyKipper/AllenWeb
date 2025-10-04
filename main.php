@@ -15,6 +15,7 @@ spl_autoload_register(function ($class) {
 		require_once $file . '/main.php';
 	}
 });
+class_alias('Allen\\Web', 'Allen\\Basic\\Web');
 array_map(function ($type) {
 	if (!function_exists('allen_' . $type)) {
 		require_once __DIR__ . '/basic/allen/' . $type . '.php';
