@@ -8,10 +8,10 @@ use Allen\Basic\Element\Button\ButtonLink;
 
 class APP
 {
-	const USER_AGENT = [
+	public const USER_AGENT = [
 		'AllenAPP',
 	];
-	const WEB = [
+	public const WEB = [
 		'https://app-web.asallenshih.tw',
 	];
 	protected static null|bool|string $version = null;
@@ -78,6 +78,16 @@ class APP
 <?php
 		Web::End();
 		exit;
+	}
+	public static function Callback(string $action, array $query = [], bool $short = false): void
+	{
+		$url = 'cb?' . http_build_query(
+			array_merge(
+				[($short ? 'a' : 'action') => $action],
+				$query,
+			),
+		);
+		self::Open($url);
 	}
 	protected static function _GetUA(): ?string
 	{
