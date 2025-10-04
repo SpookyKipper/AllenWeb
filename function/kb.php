@@ -18,6 +18,12 @@ class Kb
 		public readonly string $base,
 	) {
 		$this->id = $_REQUEST['id'] ?? null;
+		if (!is_null($this->id)) {
+			if (str_starts_with($this->id, '/') || str_ends_with($this->id, '/') || str_contains($this->id, '..')) {
+				http_response_code(400);
+				exit;
+			}
+		}
 	}
 	/**
 	 * 取得知識庫檔案路徑
@@ -196,7 +202,7 @@ class Kb
 								'en-US' => 'Learn More',
 								'zh-Hant-TW' => '了解更多',
 								'zh-Hans-TW' => '了解更多',
-							]), href: Uri::Link('?id=' . $kb, lang: true)) ?>
+							]), href: Uri::Link('?id=' . $this->id . '/' . $kb, lang: true)) ?>
 						</div>
 					<?php
 					}
