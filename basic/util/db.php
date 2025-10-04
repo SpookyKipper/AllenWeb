@@ -5,12 +5,14 @@ namespace Allen\Basic\Util;
 use Allen\Basic\Util\Db\{MySQL, D1};
 use Exception;
 
-class Db {
+class Db
+{
 	/**
 	 * @var MySQL|D1[]
 	 */
-	static private $instances = [];
-	static public function Get(string $id = 'default'): MySQL|D1 {
+	private static $instances = [];
+	public static function Get(string $id = 'default'): MySQL|D1
+	{
 		if (!isset(self::$instances[$id])) {
 			$type = Config::Get('util.db.' . $id . '.type', 'mysql');
 			$host = Config::Get('util.db.' . $id . '.host', 'localhost');
