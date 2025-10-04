@@ -31,6 +31,8 @@ class ButtonLink extends Button
 	}
 	public function Render(): string
 	{
-		return $this->a->ContentSet($this)->Render();
+		$render = parent::Render();
+		$this->a->ContentSet($render);
+		return $this->a->Render();
 	}
 }
