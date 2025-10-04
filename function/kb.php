@@ -186,7 +186,7 @@ class Kb
 				<div class="card flex">
 					<?php
 					foreach ($kb_list as $kb) {
-						$info = $this->Info($kb);
+						$info = $this->Info($this->id . '/' . $kb);
 						if (is_null($info)) continue;
 					?>
 						<div class="card">
@@ -209,7 +209,7 @@ class Kb
 				'en-US' => 'Back to Knowledge Base Home',
 				'zh-Hant-TW' => '回知識庫首頁',
 				'zh-Hans-TW' => '回知识库首页',
-			]), href: Uri::Link('', lang: true)) ?>
+			]), href: Uri::Link('?', lang: true)) ?>
 			<?php if (count(explode('/', $kb)) > 1) { ?>
 				<?= new ButtonLink(content: Language::Output([
 					'en-US' => 'Back to Parent',
