@@ -166,7 +166,7 @@ class Kb
 							'en-US' => 'Learn More',
 							'zh-Hant-TW' => '了解更多',
 							'zh-Hans-TW' => '了解更多',
-						]), href: Uri::Link('?id=' . $kb, lang: true)); ?>
+						]), href: Uri::Link('?id=' . $kb, lang: true, querySlash: true)); ?>
 					</div>
 				<?php
 				}
@@ -202,7 +202,7 @@ class Kb
 								'en-US' => 'Learn More',
 								'zh-Hant-TW' => '了解更多',
 								'zh-Hans-TW' => '了解更多',
-							]), href: Uri::Link('?id=' . $this->id . '/' . $kb, lang: true)) ?>
+							]), href: Uri::Link('?id=' . $this->id . '/' . $kb, lang: true, querySlash: true)) ?>
 						</div>
 					<?php
 					}
@@ -221,7 +221,7 @@ class Kb
 					'en-US' => 'Back to Parent',
 					'zh-Hant-TW' => '回上層',
 					'zh-Hans-TW' => '回上层',
-				]), href: Uri::Link('?id=' . implode('/', array_slice(explode('/', $this->id), 0, -1)), lang: true)) ?>
+				]), href: Uri::Link('?id=' . implode('/', array_slice(explode('/', $this->id), 0, -1)), lang: true, querySlash: true)) ?>
 <?php
 			}
 		}

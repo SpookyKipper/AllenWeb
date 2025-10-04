@@ -186,7 +186,7 @@ class Uri
 	/**
 	 * 修改連結網址
 	 */
-	public static function Link(string $url, bool $lang = false): string
+	public static function Link(string $url, bool $lang = false, bool $querySlash = false): string
 	{
 		$uri = self::Parse($url);
 		if ($lang) {
@@ -196,6 +196,10 @@ class Uri
 				$uri = $uri->AddQuery('lang', Language::Get());
 			}
 		}
-		return $uri->Get();
+		$result = $uri->Get();
+		if ($querySlash) {
+			$result = str_replace(['%2F'], '/', $result);
+		}
+		return $result;
 	}
 }
