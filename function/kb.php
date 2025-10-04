@@ -150,17 +150,17 @@ class Kb
 			<div class="card flex">
 				<?php
 				foreach ($this->ListDir() as $kb) {
-					$info = $this->Info($kb);
-					if (is_null($info)) continue;
+					$kb_info = $this->Info($kb);
+					if (is_null($kb_info)) continue;
 				?>
 					<div class="card">
-						<h3><?= $info['title'] ?? '未知' ?></h3>
-						<p><?= nl2br(htmlspecialchars($info['description'] ?? '無相關描述')) ?></p>
-						<?= new ButtonLink(content: Language::Output([
+						<h3><?= $kb_info['title'] ?? '未知' ?></h3>
+						<p><?= nl2br(htmlspecialchars($kb_info['description'] ?? '無相關描述')) ?></p>
+						<?php echo new ButtonLink(content: Language::Output([
 							'en-US' => 'Learn More',
 							'zh-Hant-TW' => '了解更多',
 							'zh-Hans-TW' => '了解更多',
-						]), href: Uri::Link('?id=' . $kb, lang: true)) ?>
+						]), href: Uri::Link('?id=' . $kb, lang: true)); ?>
 					</div>
 				<?php
 				}
