@@ -10,7 +10,6 @@ trait Href
 	}
 	public function HrefSet(?string $href): self
 	{
-		$this->AttributeAdd('href', $href);
-		return $this;
+		return $this->AttributeAdd('href', $href);
 	}
 }

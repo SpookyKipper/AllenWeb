@@ -13,7 +13,6 @@ trait Rel
 	}
 	public function RelSet(?EnumRel $rel): self
 	{
-		$this->AttributeAdd('rel', $rel?->value);
-		return $this;
+		return $this->AttributeAdd('rel', $rel?->value);
 	}
 }

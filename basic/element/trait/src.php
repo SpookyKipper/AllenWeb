@@ -10,7 +10,6 @@ trait Src
 	}
 	public function SrcSet(?string $src): self
 	{
-		$this->AttributeAdd('src', $src);
-		return $this;
+		return $this->AttributeAdd('src', $src);
 	}
 }
