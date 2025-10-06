@@ -4,9 +4,34 @@ namespace Allen\Basic\Element\Button;
 
 use Allen\Basic\Element\{A, Button};
 use Allen\Basic\Element\Enum\Target;
+use Allen\Basic\Util\{Uri};
 
 class ButtonLink extends Button
 {
+	public static function Create(
+		?string $content = null,
+		?string $link = null,
+		bool $lang = false,
+		bool $newTab = false,
+		bool $querySlash = false,
+		?string $id = null,
+		?array $class = null,
+		?array $style = null,
+	): self {
+		return new self(
+			content: $content,
+			id: $id,
+			class: $class,
+			style: $style,
+			href: Uri::Link(
+				url: $link,
+				lang: $lang,
+				querySlash: $querySlash,
+			),
+			target: $newTab ? Target::Blank
+				: null,
+		);
+	}
 	protected A $a;
 	public function __construct(
 		?array $attribute = null,
