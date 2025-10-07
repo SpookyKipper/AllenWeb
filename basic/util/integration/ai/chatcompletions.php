@@ -110,9 +110,10 @@ class ChatCompletions implements Base
 			return null;
 		}
 		$request = $this->ai->_RequestPOST(
-			$path,
-			$header,
-			json_encode($send, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+			path: $path,
+			header: $header,
+			body: json_encode($send, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+			stream: $this->stream,
 		);
 		$data = match ($this->ai->api_type) {
 			ApiType::OpenAI => Response::FromOpenAI($request),
