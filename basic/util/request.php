@@ -7,18 +7,18 @@ use CurlHandle;
 class Request
 {
 	protected string $url;
-	protected array $header;
 	/**
 	 * 請求
 	 * @param string|null $url 請求的 URL
 	 * @param array<string, string|null> $header 請求的 Header
 	 */
-	public function __construct(?string $url = null, array $header = [])
-	{
+	public function __construct(
+		?string $url = null,
+		protected array $header = [],
+	) {
 		if ($url !== null) {
 			$this->url = $url;
 		}
-		$this->header = $header;
 	}
 	/**
 	 * 取得請求 URL

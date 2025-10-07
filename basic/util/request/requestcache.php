@@ -10,9 +10,16 @@ class RequestCache extends Request
 {
 	protected Cache $cache_class;
 	protected ?array $cache = null;
-	public function __construct(string $cacheId, int $cacheExpire = 0, ?string $url = null, array $header = [])
-	{
-		parent::__construct($url, $header);
+	public function __construct(
+		string $cacheId,
+		int $cacheExpire = 0,
+		?string $url = null,
+		array $header = []
+	) {
+		parent::__construct(
+			url: $url,
+			header: $header,
+		);
 		$this->cache_class = new Cache($cacheId, expire: $cacheExpire);
 		if ($this->cache_class->Exist()) {
 			$this->cache = $this->cache_class->Get(force: true);
