@@ -96,7 +96,7 @@ class Message
 	}
 	public static function FromArray(array $data): self
 	{
-		$role = Role::from($data['role']);
+		$role = Role::tryFrom($data['role'] ?? '') ?? Role::User;
 		$content = $data['content'] ?? [];
 		if (is_string($content)) {
 			$content = [$content];
