@@ -87,12 +87,13 @@ class Ai
 	{
 		return self::_RequestData($this->_Request(path: $path, header: $header, stream: $stream)->POST($body));
 	}
-	public function ChatCompletions(string $model, array $messages = []): ChatCompletions
+	public function ChatCompletions(string $model, array $messages = [], bool $stream = false): ChatCompletions
 	{
 		return new ChatCompletions(
 			ai: $this,
 			model: $model,
 			messages: $messages,
+			stream: $stream,
 		);
 	}
 	public static function GoogleAI(
