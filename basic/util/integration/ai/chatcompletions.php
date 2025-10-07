@@ -14,6 +14,7 @@ class ChatCompletions implements Base
 		protected readonly Ai $ai,
 		protected string $model,
 		protected array $messages = [],
+		protected bool $stream = false,
 	) {
 		$this->messages = array_filter($messages, fn($m) => $m instanceof Message);
 	}
@@ -47,12 +48,25 @@ class ChatCompletions implements Base
 		$this->messages = array_merge($this->messages, $messages);
 		return $this;
 	}
+	public function IsStream(): bool
+	{
+		return $this->stream;
+	}
+	public function SetStream(bool $stream): self
+	{
+		$this->stream = $stream;
+		return $this;
+	}
 	public function OpenAI(): array
 	{
-		return [
+		$data = [
 			'model' => $this->model,
 			'messages' => array_values(array_map(fn($m) => $m->OpenAI(), $this->messages)),
 		];
+		if ($this->stream) {
+			$data['stream'] = true;
+		}
+		return $data;
 	}
 	public function GoogleAI(): array
 	{
@@ -81,7 +95,7 @@ class ChatCompletions implements Base
 		];
 		$path = match ($this->ai->api_type) {
 			ApiType::OpenAI => '/chat/completions',
-			ApiType::GoogleAI => '/models/' . $this->model . ':generateContent',
+			ApiType::GoogleAI => '/models/' . $this->model . ($this->stream ? ':streamGenerateContent?alt=sse' : ':generateContent'),
 			default => null,
 		};
 		if (is_null($path)) {

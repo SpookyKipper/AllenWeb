@@ -5,6 +5,7 @@ namespace Allen\Basic\Util\Integration;
 use Allen\Basic\Util\Request;
 use Allen\Basic\Util\Integration\Ai\{ChatCompletions, Models};
 use Allen\Basic\Util\Integration\Ai\Data\ApiType;
+use Allen\Basic\Util\Request\RequestStream;
 
 class Ai
 {
@@ -16,7 +17,14 @@ class Ai
 	) {
 		$this->models = new Models($this);
 	}
-	protected function _Request(string $path, array $header = [])
+	/**
+	 * 建立請求物件
+	 * @param string $path 請求的路徑
+	 * @param array<string, string> $header 請求的 Header
+	 * @param bool $stream 是否使用串流模式
+	 * @return Request|RequestStream
+	 */
+	protected function _Request(string $path, array $header = [], bool $stream = false): Request|RequestStream
 	{
 		$url = $this->base_url . $path;
 		if (!empty($this->api_key)) {
@@ -30,6 +38,12 @@ class Ai
 						break;
 					}
 			}
+		}
+		if ($stream) {
+			return new RequestStream(
+				url: $url,
+				header: $header,
+			);
 		}
 		return new Request(
 			url: $url,
@@ -54,19 +68,24 @@ class Ai
 	}
 	/**
 	 * 處理 GET 資料
-	 * @param array{code: int, response: mixed, header: array<string, string[]>} $data
+	 * @param string $path 請求的路徑
+	 * @param array<string, string> $header 請求的 Header
+	 * @param bool $stream 是否使用串流模式
 	 */
-	public function _RequestGET(string $path, array $header = [])
+	public function _RequestGET(string $path, array $header = [], bool $stream = false)
 	{
-		return self::_RequestData($this->_Request($path, $header)->GET());
+		return self::_RequestData($this->_Request(path: $path, header: $header, stream: $stream)->GET());
 	}
 	/**
 	 * 處理 POST 資料
-	 * @param array{code: int, response: mixed, header: array<string, string[]>} $data
+	 * @param string $path 請求的路徑
+	 * @param array<string, string> $header 請求的 Header
+	 * @param string|null $body 請求的 Body
+	 * @param bool $stream 是否使用串流模式
 	 */
-	public function _RequestPOST(string $path, array $header = [], ?string $body = null)
+	public function _RequestPOST(string $path, array $header = [], ?string $body = null, bool $stream = false)
 	{
-		return self::_RequestData($this->_Request($path, $header)->POST($body));
+		return self::_RequestData($this->_Request(path: $path, header: $header, stream: $stream)->POST($body));
 	}
 	public function ChatCompletions(string $model, array $messages = []): ChatCompletions
 	{
