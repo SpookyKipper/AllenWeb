@@ -21,10 +21,10 @@ class Ai
 	 * 建立請求物件
 	 * @param string $path 請求的路徑
 	 * @param array<string, string> $header 請求的 Header
-	 * @param bool $stream 是否使用串流模式
+	 * @param callable{CurlHandle, string}|null $stream 串流回調函數
 	 * @return Request|RequestStream
 	 */
-	protected function _Request(string $path, array $header = [], bool $stream = false): Request|RequestStream
+	protected function _Request(string $path, array $header = [], ?callable $stream = null): Request|RequestStream
 	{
 		$url = $this->base_url . $path;
 		if (!empty($this->api_key)) {
@@ -39,10 +39,11 @@ class Ai
 					}
 			}
 		}
-		if ($stream) {
+		if (is_callable($stream)) {
 			return new RequestStream(
 				url: $url,
 				header: $header,
+				callback: $stream,
 			);
 		}
 		return new Request(
@@ -70,9 +71,9 @@ class Ai
 	 * 處理 GET 資料
 	 * @param string $path 請求的路徑
 	 * @param array<string, string> $header 請求的 Header
-	 * @param bool $stream 是否使用串流模式
+	 * @param callable{CurlHandle, string}|null $stream 串流回調函數
 	 */
-	public function _RequestGET(string $path, array $header = [], bool $stream = false)
+	public function _RequestGET(string $path, array $header = [], ?callable $stream = null)
 	{
 		return self::_RequestData($this->_Request(path: $path, header: $header, stream: $stream)->GET());
 	}
@@ -81,9 +82,9 @@ class Ai
 	 * @param string $path 請求的路徑
 	 * @param array<string, string> $header 請求的 Header
 	 * @param string|null $body 請求的 Body
-	 * @param bool $stream 是否使用串流模式
+	 * @param callable{CurlHandle, string}|null $stream 串流回調函數
 	 */
-	public function _RequestPOST(string $path, array $header = [], ?string $body = null, bool $stream = false)
+	public function _RequestPOST(string $path, array $header = [], ?string $body = null, ?callable $stream = null)
 	{
 		return self::_RequestData($this->_Request(path: $path, header: $header, stream: $stream)->POST($body));
 	}

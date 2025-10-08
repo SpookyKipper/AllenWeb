@@ -4,6 +4,8 @@ namespace Allen\Basic\Util\Integration\Ai;
 
 use Allen\Basic\Util\Integration\Ai;
 use Allen\Basic\Util\Integration\Ai\Data\{Base, Message, Message\Content, Message\Role, Response, ApiType};
+use Allen\Basic\Util\SSE;
+use CurlHandle;
 
 class ChatCompletions implements Base
 {
@@ -113,7 +115,7 @@ class ChatCompletions implements Base
 			path: $path,
 			header: $header,
 			body: json_encode($send, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-			stream: $this->stream,
+			stream: $this->stream ? fn(CurlHandle $ch, string $data) => SSE::Send($data) : null,
 		);
 		$data = match ($this->ai->api_type) {
 			ApiType::OpenAI => Response::FromOpenAI($request),
