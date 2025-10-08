@@ -11,7 +11,7 @@ class SSE
 		public string $data,
 		public ?string $event = null,
 	) {}
-	public static function Header(): void
+	public static function Init(): void
 	{
 		@ini_set('output_buffering', 'off');
 		@ini_set('zlib.output_compression', 'off');
@@ -19,8 +19,11 @@ class SSE
 		}
 		@header('X-Accel-Buffering: no');
 		@header('Cache-Control: no-cache');
-		@header('Content-Type: text/event-stream');
 		@header('Connection: keep-alive');
+	}
+	public static function Header(): void
+	{
+		@header('Content-Type: text/event-stream');
 	}
 	public static function Encode(self $sse): string
 	{
