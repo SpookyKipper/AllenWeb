@@ -3,9 +3,7 @@
 namespace Allen\Basic\Util;
 
 use Allen\Web;
-use Allen\Basic\Util\Convert\Image;
-use Allen\Basic\Util\Convert\Image\OutputFormat;
-use Allen\Basic\Util\Convert\Image\OutputMethod;
+use Allen\Basic\Util\Convert\{Image, Image\OutputFormat, Image\OutputMethod};
 
 /**
  * 檔案處理
