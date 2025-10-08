@@ -2,50 +2,145 @@
 
 namespace Allen\Basic\Util;
 
+use Allen\Web;
+use Allen\Basic\Util\Convert\Image;
+use Allen\Basic\Util\Convert\Image\OutputFormat;
+use Allen\Basic\Util\Convert\Image\OutputMethod;
+
+/**
+ * 檔案處理
+ */
 class File
 {
-	public function __construct()
-	{
+	/**
+	 * 檔案資源
+	 * @var resource|null
+	 */
+	protected $file_resource = null;
+	/**
+	 * 檔案根目錄
+	 */
+	protected ?string $file_base = null;
+	/**
+	 * 檔案大小
+	 */
+	protected ?int $size = null;
+	/**
+	 * 圖片品質(0-100)
+	 */
+	protected ?int $image_quality = null;
+	/**
+	 * @param resource|null $file_resource 檔案資源
+	 * @param string $file_base 檔案根目錄
+	 * @param bool $list 是否允許顯示目錄列表
+	 * @param bool|null $cache_control 是否啟用快取控制，預設null為Private
+	 * @param string|null 設定內容類型，預設null為自動偵測或application/octet-stream
+	 * @param string|null $download_name 下載檔案名稱，預設null為不設定
+	 * @param bool $download 是否以瀏覽器下載檔案方式提供檔案，預設為 false
+	 * @param int|null $last_modified 檔案最後修改時間，預設null為不設定
+	 */
+	public function __construct(
+		$file_resource = null,
+		$file_base = './data',
+		protected bool $list = false,
+		protected ?bool $cache_control = null,
+		protected ?string $content_type = null,
+		protected ?string $download_name = null,
+		protected bool $download = false,
+		protected ?int $last_modified = null,
+		?int $image_quality = null,
+		protected ?int $image_width = null,
+		protected ?int $image_height = null,
+	) {
 		@ob_end_clean();
 		set_time_limit(0);
+		$this
+			->FileResourceSet($file_resource)
+			->FileBaseSet($file_base)
+			->ImageQualitySet($image_quality);
 	}
-	protected $file_resource = null;
-	protected string $file_base = './data';
-	public function FileBaseGet(): string
+	/**
+	 * 取得檔案資源
+	 * @return resource|null
+	 */
+	public function FileResourceGet()
+	{
+		return $this->file_resource;
+	}
+	/**
+	 * 設定檔案資源
+	 * @param resource|null $resource 檔案資源
+	 */
+	public function FileResourceSet($resource): self
+	{
+		if (is_resource($this->file_resource)) {
+			fclose($this->file_resource);
+			$this->file_resource = null;
+		}
+		$this->file_resource = (is_resource($resource)) ? $resource : null;
+		$this->SizeSet($this->file_resource ? @fstat($this->file_resource)['size'] ?? null : null);
+		return $this;
+	}
+	/**
+	 * 取得檔案根目錄
+	 */
+	public function FileBaseGet(): ?string
 	{
 		return $this->file_base;
 	}
-	public function FileBaseSet(string $base): self
+	/**
+	 * 設定檔案根目錄
+	 * @param string|null $base 檔案根目錄
+	 */
+	public function FileBaseSet(?string $base): self
 	{
-		if (is_dir($base)) {
-			$this->file_base = $base;
-		} else {
-			http_response_code(404);
-			die();
-		}
+		$this->file_base = (is_dir($base)) ? $base : null;
 		return $this;
 	}
-	protected bool $list = false;
+	/**
+	 * 取得是否允許顯示目錄列表
+	 */
+	public function ListGet(): bool
+	{
+		return $this->list;
+	}
+	/**
+	 * 設定是否允許顯示目錄列表
+	 */
 	public function ListSet(bool $list): self
 	{
 		$this->list = $list;
 		return $this;
 	}
-	protected bool $cache_control = true;
-	public function CacheControlGet(): bool
+	/**
+	 * 取得是否啟用快取控制
+	 * @return bool|null
+	 */
+	public function CacheControlGet(): ?bool
 	{
 		return $this->cache_control;
 	}
-	public function CacheControlSet(bool $cache_control): self
+	/**
+	 * 設定是否啟用快取控制
+	 * @param bool|null $cache_control 是否啟用快取控制，null為Private
+	 */
+	public function CacheControlSet(?bool $cache_control): self
 	{
 		$this->cache_control = $cache_control;
 		return $this;
 	}
-	protected ?string $content_type = null;
+	/**
+	 * 取得內容類型
+	 * @return string|null
+	 */
 	public function ContentTypeGet(): ?string
 	{
 		return $this->content_type;
 	}
+	/**
+	 * 設定內容類型
+	 * @param string|null $type 內容類型，null為application/octet-stream
+	 */
 	public function ContentTypeSet(?string $type): self
 	{
 		if (empty($type)) {
@@ -55,11 +150,18 @@ class File
 		}
 		return $this;
 	}
-	protected ?string $download_name = null;
+	/**
+	 * 取得下載檔案名稱
+	 * @return string|null 下載檔案名稱，null表示不設定
+	 */
 	public function DownloadNameGet(): ?string
 	{
 		return $this->download_name;
 	}
+	/**
+	 * 設定下載檔案名稱
+	 * @param string|null $name 下載檔案名稱，null表示不設定
+	 */
 	public function DownloadNameSet(?string $name): self
 	{
 		if (empty($name)) {
@@ -75,71 +177,81 @@ class File
 		}
 		return $this;
 	}
-	protected bool $download = false;
+	/**
+	 * 取得是否以瀏覽器下載檔案方式提供檔案
+	 * @return bool 是否以瀏覽器下載檔案方式提供檔案
+	 */
 	public function DownloadGet(): bool
 	{
 		return $this->download;
 	}
+	/**
+	 * 設定是否以瀏覽器下載檔案方式提供檔案
+	 * @param bool $download 是否以瀏覽器下載檔案方式提供檔案
+	 */
 	public function DownloadSet(bool $download): self
 	{
 		$this->download = $download;
 		return $this;
 	}
-	protected ?int $size = null;
+	/**
+	 * 取得檔案最後修改時間
+	 * @return int|null 檔案最後修改時間，null表示不設定
+	 */
+	public function LastModifiedGet(): ?int
+	{
+		return $this->last_modified;
+	}
+	/**
+	 * 設定檔案最後修改時間
+	 * @param int|null $time 檔案最後修改時間，null表示不設定
+	 */
+	public function LastModifiedSet(?int $time): self
+	{
+		$this->last_modified = (is_int($time) && $time >= 0) ? $time : null;
+		return $this;
+	}
+	/**
+	 * 取得檔案大小
+	 * @return int|null 檔案大小，null表示不設定
+	 */
 	public function SizeGet(): ?int
 	{
 		return $this->size;
 	}
+	/**
+	 * 設定檔案大小
+	 * @param int|null $size 檔案大小，null表示不設定
+	 */
 	public function SizeSet(?int $size): self
 	{
-		if ($size === null || $size < 0) {
-			$this->size = null;
-		} else {
-			$this->size = $size;
-		}
+		$this->size = (is_int($size) && $size >= 0) ? $size : null;
 		return $this;
 	}
-	protected ?int $last_modified = null;
-	public function FileSet(string $file): self
+	/**
+	 * 設定檔案
+	 */
+	public function FileFullSet(string $file): self
 	{
-		if ($this->file_resource !== null) {
-			fclose($this->file_resource);
-			$this->file_resource = null;
-		}
-		if (!is_file($file)) {
-			http_response_code(404);
-			die();
-		}
-		$last_modified = @filemtime($file);
-		if ($last_modified !== false) {
-			$this->last_modified = $last_modified;
-			header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $last_modified) . ' GMT');
-		} else {
-			$this->last_modified = null;
-		}
-		$fp = @fopen($file, 'rb');
-		if ($fp === false) {
-			http_response_code(500);
-			die();
-		}
-		$this->file_resource = $fp;
+		if (is_file($file)) $this
+			->LastModifiedSet(@filemtime($file) ?: null)
+			->ContentTypeSet(@mime_content_type($file) ?: null)
+			->FileResourceSet(@fopen($file, 'rb') ?: null);
 		return $this;
 	}
-	protected function FileTmpCreate(): self
+	/**
+	 * 設定檔案路徑
+	 */
+	public function FileSet(?string $file): self
 	{
-		if (is_resource($this->file_resource)) {
-			fclose($this->file_resource);
-			$this->file_resource = null;
+		if (!empty($file) && !empty($file_base = $this->FileBaseGet())) {
+			$full_file = rtrim(($file_base ?? ''), '/') . '/' . ltrim($file, '/');
+			if (is_file($full_file)) {
+				$this->FileFullSet($full_file);
+			}
 		}
-		$resource = tmpfile();
-		if ($resource === false) {
-			http_response_code(500);
-			die();
-		}
-		$this->file_resource = $resource;
 		return $this;
 	}
-	protected ?int $image_quality = null;
 	public function ImageQualityGet(): ?int
 	{
 		return $this->image_quality;
@@ -151,7 +263,6 @@ class File
 		}
 		return $this;
 	}
-	protected ?int $image_width = null;
 	public function ImageWidthGet(): ?int
 	{
 		return $this->image_width;
@@ -161,7 +272,6 @@ class File
 		$this->image_width = $width;
 		return $this;
 	}
-	protected ?int $image_height = null;
 	public function ImageHeightGet(): ?int
 	{
 		return $this->image_height;
@@ -170,53 +280,6 @@ class File
 	{
 		$this->image_height = $height;
 		return $this;
-	}
-	protected int $_image_size_min = 1;
-	protected int $_image_size_max = 100000;
-	protected function _ImageResize(\GdImage $image): \GdImage
-	{
-		// 處理寬度和高度的情況
-		if ($this->ImageWidthGet() === null && $this->ImageHeightGet() === null) {
-			return $image;
-		} else if ($this->ImageHeightGet() === null) {
-			$this->ImageHeightSet(ceil(imagesy($image) * $this->ImageWidthGet() / imagesx($image)));
-		} else if ($this->ImageWidthGet() === null) {
-			$this->ImageWidthSet(ceil(imagesx($image) * $this->ImageHeightGet() / imagesy($image)));
-		}
-		// 檢查最小和最大尺寸
-		if ($this->ImageWidthGet() < $this->_image_size_min || $this->ImageHeightGet() < $this->_image_size_min) {
-			return $image;
-		} else if ($this->ImageWidthGet() > $this->_image_size_max) {
-			$this->ImageHeightSet(ceil($this->ImageHeightGet() * $this->_image_size_max / $this->ImageWidthGet()));
-			$this->ImageWidthSet($this->_image_size_max);
-			return $this->_ImageResize($image);
-		} else if ($this->ImageHeightGet() > $this->_image_size_max) {
-			$this->ImageWidthSet(ceil($this->ImageWidthGet() * $this->_image_size_max / $this->ImageHeightGet()));
-			$this->ImageHeightSet($this->_image_size_max);
-			return $this->_ImageResize($image);
-		} else if ($this->ImageWidthGet() > imagesx($image)) {
-			$this->ImageHeightSet(ceil($this->ImageHeightGet() * imagesx($image) / $this->ImageWidthGet()));
-			$this->ImageWidthSet(imagesx($image));
-			return $this->_ImageResize($image);
-		} else if ($this->ImageHeightGet() > imagesy($image)) {
-			$this->ImageWidthSet(ceil($this->ImageWidthGet() * imagesy($image) / $this->ImageHeightGet()));
-			$this->ImageHeightSet(imagesy($image));
-			return $this->_ImageResize($image);
-		}
-		// 執行圖像縮放
-		$new_image = @imagecreatetruecolor($this->ImageWidthGet(), $this->ImageHeightGet());
-		if ($new_image === false) {
-			return $image;
-		}
-		imagecolortransparent($new_image, imagecolorallocatealpha($new_image, 255, 255, 255, 127));
-		imagealphablending($new_image, false);
-		imagesavealpha($new_image, true);
-		if (!@imagecopyresampled($new_image, $image, 0, 0, 0, 0, $this->ImageWidthGet(), $this->ImageHeightGet(), imagesx($image), imagesy($image))) {
-			imagedestroy($new_image);
-			return $image;
-		}
-		imagedestroy($image);
-		return $new_image;
 	}
 	public function ImageResize(): self
 	{
@@ -231,92 +294,97 @@ class File
 		if ($mime === false || !str_starts_with($mime, 'image/')) {
 			return $this;
 		}
-		$base64_data = 'data://' . $mime . ';base64,' . base64_encode($data);
-		if ($mime === 'image/webp') {
-			$image = @imagecreatefromwebp($base64_data);
-		} else if ($mime === 'image/png') {
-			$image = @imagecreatefrompng($base64_data);
-		} else {
-			$image = @imagecreatefromstring($data);
-		}
-		unset($base64_data);
-		if ($image === false) {
+		$image = Image::FromString($data);
+		if ($image === null) {
 			return $this;
 		}
-		$image = $this->_ImageResize($image);
-		$this->FileTmpCreate();
-		imagewebp($image, $this->file_resource, ($this->ImageQualityGet() ?? 80));
-		imagedestroy($image);
-		$this->ContentTypeSet('image/webp');
-		$this->SizeSet(ftell($this->file_resource));
+		$this
+			->FileResourceSet($image->Resize(
+				width: $this->ImageWidthGet(),
+				height: $this->ImageHeightGet(),
+			)->Output(
+				format: OutputFormat::WebP,
+				method: OutputMethod::Resource,
+				quality: $this->ImageQualityGet() ?? -1
+			))
+			->ContentTypeSet('image/webp');
 		$download_name = $this->DownloadNameGet();
 		if (is_string($download_name)) {
 			$this->DownloadNameSet(pathinfo($download_name, PATHINFO_FILENAME) . '.webp');
 		}
 		return $this;
 	}
-	protected function Send_CacheControl(): self
-	{
-		if ($this->CacheControlGet()) {
-			header('Cache-Control: public, max-age=31536000, must-revalidate');
-		} else {
-			header('Cache-Control: no-cache, no-store, must-revalidate');
-		}
-		$headers = array_change_key_case(getallheaders(), \CASE_LOWER);
-		if (isset($headers['if-modified-since'])) {
-			$last_modified = strtotime($headers['if-modified-since']);
-			if ($this->last_modified !== null && $last_modified >= $this->last_modified) {
-				http_response_code(304);
-				die();
-			}
-		}
-		return $this;
-	}
-	protected function Send_ContentType(): self
+	protected function SendHeader_ContentType(): self
 	{
 		header('Content-Type: ' . ($this->ContentTypeGet() ?? 'application/octet-stream'));
 		return $this;
 	}
-	protected function Send_Download(): self
+	protected function SendHeader_Download(): self
 	{
 		header('Content-Disposition: ' . ($this->DownloadGet() ? 'attachment' : 'inline') . ($this->DownloadNameGet() ? '; filename="' . $this->DownloadNameGet() . '"' : ''));
 		return $this;
 	}
+	protected function SendHeader_CacheControl(): self
+	{
+		$cc = $this->CacheControlGet();
+		if ($cc === true) header('Cache-Control: public, max-age=31536000, must-revalidate');
+		else if ($cc === false) header('Cache-Control: no-cache, no-store, must-revalidate');
+		else header('Cache-Control: private, max-age=86400, must-revalidate');
+		return $this;
+	}
+	protected function SendHeader_LastModified(): self
+	{
+		if ($this->last_modified !== null) {
+			header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $this->last_modified) . ' GMT');
+			$if_modified_since = Server::GetHeader('If-Modified-Since');
+			if ($if_modified_since !== null && strtotime($if_modified_since) >= $this->last_modified) {
+				http_response_code(304);
+				exit;
+			}
+		}
+		return $this;
+	}
+	protected function SendHeader(): self
+	{
+		return $this
+			->SendHeader_ContentType()
+			->SendHeader_CacheControl()
+			->SendHeader_Download()
+			->SendHeader_LastModified();
+	}
 	protected ?int $partial_size = null;
 	protected int $range = 0;
-	protected function Send_Size(): self
+	protected function SendSize(): self
 	{
-		if (empty($this->size)) {
-			return $this;
-		}
-		if (isset($_SERVER['HTTP_RANGE'])) {
-			$range = $_SERVER['HTTP_RANGE'];
-			if (preg_match('/bytes=(\d+)-(\d+)?/', $range, $matches)) {
-				$this->range = intval($matches[1]);
-				if (isset($matches[2])) {
-					$this->partial_size = intval($matches[2]) - $this->range + 1;
+		if (!empty($this->size)) {
+			if (isset($_SERVER['HTTP_RANGE'])) {
+				$range = $_SERVER['HTTP_RANGE'];
+				if (preg_match('/bytes=(\d+)-(\d+)?/', $range, $matches)) {
+					$this->range = intval($matches[1]);
+					if (isset($matches[2])) {
+						$this->partial_size = intval($matches[2]) - $this->range + 1;
+					} else {
+						$this->partial_size = $this->size - $this->range;
+					}
+					if ($this->partial_size < 0 || $this->range >= $this->size) {
+						http_response_code(416);
+						exit;
+					}
 				} else {
-					$this->partial_size = $this->size - $this->range;
-				}
-				if ($this->partial_size < 0 || $this->range >= $this->size) {
 					http_response_code(416);
-					die();
+					exit;
 				}
-			} else {
-				http_response_code(416);
-				die();
+				http_response_code(206);
+				header('Content-Range: bytes ' . $this->range . '-' . ($this->range + $this->partial_size - 1) . '/' . $this->size);
 			}
-			http_response_code(206);
-			header('Content-Range: bytes ' . $this->range . '-' . ($this->range + $this->partial_size - 1) . '/' . $this->size);
-		} else {
-			$this->partial_size = $this->size;
+			$this->partial_size ??= $this->size;
+			header('Accept-Ranges: bytes');
+			header('Content-Length: ' . $this->partial_size);
 		}
-		header('Accept-Ranges: bytes');
-		header('Content-Length: ' . $this->partial_size);
 		return $this;
 	}
 	protected int $max_read_size = 1048576;
-	protected function Send_File(): self
+	protected function SendFile(): self
 	{
 		try {
 			if (!is_resource($this->file_resource)) {
@@ -330,7 +398,8 @@ class File
 				if ($this->partial_size < 0) {
 					break;
 				}
-				flush();
+				@ob_flush();
+				@flush();
 			}
 			fclose($this->file_resource);
 		} catch (\Throwable $e) {
@@ -339,9 +408,16 @@ class File
 		}
 		return $this;
 	}
+	public function Send(): self
+	{
+		return $this
+			->SendHeader()
+			->SendSize()
+			->SendFile();
+	}
 	public function ReadFile(string $file): void
 	{
-		if (
+		if ((
 			$file !== '' &&
 			(
 				str_starts_with('/', $file) ||
@@ -349,16 +425,17 @@ class File
 				str_contains('./', $file) ||
 				str_contains('\\', $file)
 			)
-		) {
+		) || $this->FileBaseGet() === null) {
 			http_response_code(404);
 			die();
-		} else if (is_dir($this->file_base . ($file === '' ? '' : '/' . $file))) {
+		} else if (is_dir($this->FileBaseGet() . ($file === '' ? '' : '/' . $file))) {
 			if (!$this->list) {
 				http_response_code(404);
 				die();
 			}
+			global $title;
 			$title = ($title ?? '') . '檔案檢視';
-			$base = &$this->file_base;
+			$base = &$this->FileBaseGet();
 			$files = array_map(function ($ctx) use ($base, $file) {
 				return [
 					'name' => $ctx,
@@ -368,7 +445,7 @@ class File
 			uasort($files, function ($a, $b) {
 				return strnatcmp($a['name'], $b['name']);
 			});
-			require_once __DIR__ . '/../web/start.php';
+			Web::Start();
 ?>
 			<div class="flex">
 				<div class="text left">
@@ -381,29 +458,12 @@ class File
 				</div>
 			</div>
 <?php
-			require_once __DIR__ . '/../web/end.php';
+			Web::End();
 			die();
-		} else if (!is_file($this->file_base . '/' . $file)) {
+		} else if (!is_file($this->FileBaseGet() . '/' . $file)) {
 			http_response_code(404);
 			die();
 		}
-		$this->FileSet($this->file_base . '/' . $file);
-		@$mime = mime_content_type($this->file_base . '/' . $file);
-		if ($mime) {
-			$this->ContentTypeSet($mime);
-		}
-		@$size = filesize($this->file_base . '/' . $file);
-		if ($size) {
-			$this->SizeSet($size);
-		}
-		if (empty($this->DownloadNameGet())) {
-			$this->DownloadNameSet($file);
-		}
-		$this->Send_CacheControl()
-			->ImageResize()
-			->Send_ContentType()
-			->Send_Download()
-			->Send_Size()
-			->Send_File();
+		$this->FileSet($file)->Send();
 	}
 }

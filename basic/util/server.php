@@ -18,11 +18,12 @@ class Server
 	}
 	public static function GetHeaders(): array
 	{
-		return getallheaders() ?: [];
+		$headers = getallheaders();
+		return array_change_key_case(is_array($headers) ? $headers : [], \CASE_LOWER);
 	}
 	public static function GetHeader(string $name): ?string
 	{
 		$headers = self::GetHeaders();
-		return $headers[$name] ?? null;
+		return $headers[strtolower($name)] ?? null;
 	}
 }
