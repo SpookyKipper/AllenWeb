@@ -74,7 +74,6 @@ class FCM
 		$client->setAuthConfig($data);
 		$client->addScope('https://www.googleapis.com/auth/firebase.messaging');
 		$token = $client->fetchAccessTokenWithAssertion();
-		var_dump($token);
 		$access_token = $token['access_token'] ?? null;
 		if (!$access_token) {
 			throw new Exception('FCM access token fetch failed');
