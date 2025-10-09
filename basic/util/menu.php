@@ -2,6 +2,8 @@
 
 namespace Allen\Basic\Util;
 
+use Allen\Basic\Path;
+
 class Menu
 {
 	static private array|null $items = null;
@@ -9,10 +11,10 @@ class Menu
 	{
 		if (self::$items === null) {
 			$domain = Server::GetDomain();
-			if ($domain !== null && is_file(__DIR__ . '/../../setting/menu/' . $domain . '.php')) {
-				self::$items = require __DIR__ . '/../../setting/menu/' . $domain . '.php';
-			} else if (is_file(__DIR__ . '/../../setting/menu/default.php')) {
-				self::$items = require __DIR__ . '/../../setting/menu/default.php';
+			if ($domain !== null && is_file(Path::Setting('menu/' . $domain . '.php'))) {
+				self::$items = require Path::Setting('menu/' . $domain . '.php');
+			} else if (is_file(Path::Setting('menu/default.php'))) {
+				self::$items = require Path::Setting('menu/default.php');
 			}
 			self::$items = is_array(self::$items) ? self::$items : [];
 		}

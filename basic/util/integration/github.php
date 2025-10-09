@@ -10,6 +10,7 @@ class GitHub
 {
 	public static function FromConfig(): self
 	{
+		Config::Init();
 		return new self(
 			token: Config::Get('util.github.token', null),
 			token_expire: Config::Get('util.github.token_expire', null),

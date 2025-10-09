@@ -60,6 +60,7 @@ class Email extends PHPMailer
 	}
 	static public function FromConfig(bool $exceptions = true): self
 	{
+		Config::Init();
 		return new self(
 			from: Config::Get('util.email.from', null),
 			from_name: Config::Get('util.email.from_name', null),

@@ -55,6 +55,7 @@ class FCM
 		if (isset(self::$access_token)) {
 			return self::$access_token;
 		}
+		Config::Init();
 		$file = Path::Setting(Config::Get('util.fcm', 'integration/fcm.json'));
 		if (!file_exists($file)) {
 			throw new Exception('FCM setting file not found: ' . $file);

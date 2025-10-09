@@ -8,15 +8,15 @@ class Path
 {
 	public static function Root(string $path = ''): string
 	{
-		$result = Config::Get('path.root', __DIR__ . '/..') . '/' . $path;
-		return $result;
+		return __DIR__ . '/../' . $path;
 	}
 	public static function Cache(string $path = ''): string
 	{
+		Config::Init();
 		return self::Root(path: Config::Get('path.cache', 'cache') . '/' . $path);
 	}
 	public static function Setting(string $path = ''): string
 	{
-		return self::Root(path: Config::Get('path.setting', 'setting') . '/' . $path);
+		return self::Root(path: 'setting/' . $path);
 	}
 }

@@ -65,6 +65,7 @@ class Shlink
 	}
 	public static function FromConfig(): ?self
 	{
+		Config::Init();
 		$host = Config::Get('util.shlink.host', null);
 		$api_key = Config::Get('util.shlink.api_key', null);
 		if (empty($host) || empty($api_key)) {
