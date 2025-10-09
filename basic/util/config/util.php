@@ -21,3 +21,5 @@ Config::SetType('util.email.template_path', ConfigType::String);
 Config::SetType('util.github.token', ConfigType::String);
 Config::SetType('util.github.token_expire', ConfigType::Int);
 Config::SetType('util.github.repos', ConfigType::Array);
+Config::SetType('util.shlink.host', ConfigType::String);
+Config::SetType('util.shlink.api_key', ConfigType::String);
