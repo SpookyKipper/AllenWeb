@@ -14,6 +14,7 @@ class Db
 	public static function Get(string $id = 'default'): MySQL|D1
 	{
 		if (!isset(self::$instances[$id])) {
+			Config::Init();
 			$type = Config::Get('util.db.' . $id . '.type', 'mysql');
 			$host = Config::Get('util.db.' . $id . '.host', 'localhost');
 			$name = Config::Get('util.db.' . $id . '.name', 'default');
