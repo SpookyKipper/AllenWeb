@@ -53,7 +53,7 @@ class MySQL implements SessionHandlerInterface
 	public function gc(int $maxlifetime): int|false
 	{
 		try {
-			$stmt = $this->db->prepare('DELETE FROM `session` WHERE `time` < ?');
+			$stmt = $this->db->prepare('DELETE FROM `session` WHERE `time` IS NULL OR `time` < ?');
 			$time = date('Y-m-d H:i:s', time() - $maxlifetime);
 			$stmt->execute([$time]);
 			return $stmt->rowCount();
