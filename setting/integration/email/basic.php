@@ -35,7 +35,7 @@ use Allen\Basic\Util\{Config, Language};
 							'zh-Hant-TW' => '超連結的網域可能因為電子郵件追蹤而改變，請以網頁載入後畫面為準。',
 							'en-US' => 'The domain of the hyperlink may change due to email tracking, please refer to the page after loading.',
 						]) ?></p>
-		<p>&copy; <?= date('Y') - Language::YearOffset() ?> <?= Config::Get('web.end.author', 'AS_Allen_Shih') ?></p>
+		<p>&copy; <?= date('Y') + Language::YearOffset() ?> <?= Config::Get('web.end.author', 'AS_Allen_Shih') ?></p>
 	</footer>
 	<style>
 		h1 {
