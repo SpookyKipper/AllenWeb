@@ -6,7 +6,7 @@ use Allen\Basic\Util\{Json, Server};
 
 class API
 {
-	static public function _Execute(
+	public static function _Execute(
 		string $service,
 		int $version,
 		?string $namespace_prefix = 'Allen\\apis',
@@ -40,7 +40,7 @@ class API
 		}
 		call_user_func($class . '::' . $method_ucf);
 	}
-	static public function _Run(
+	public static function _Run(
 		?string $namespace_prefix = 'Allen\\apis',
 	): void {
 		$service = self::InputQuery('service', required: true);
@@ -54,7 +54,7 @@ class API
 			namespace_prefix: $namespace_prefix,
 		);
 	}
-	static public function InputHeader(?string $header = null, bool $required = true): array|string|null
+	public static function InputHeader(?string $header = null, bool $required = true): array|string|null
 	{
 		if (is_null($header)) {
 			return Server::GetHeaders();
@@ -65,7 +65,7 @@ class API
 		}
 		return $content;
 	}
-	static public function InputQuery(?string $query = null, bool $required = true): array|string|null
+	public static function InputQuery(?string $query = null, bool $required = true): array|string|null
 	{
 		if (is_null($query)) {
 			return $_REQUEST;
@@ -76,7 +76,7 @@ class API
 		}
 		return null;
 	}
-	static public function InputData(bool $required = true, bool $json = true): mixed
+	public static function InputData(bool $required = true, bool $json = true): mixed
 	{
 		$data = file_get_contents('php://input');
 		if (empty($data)) {
@@ -95,7 +95,7 @@ class API
 		}
 		return $data;
 	}
-	static public function Output(mixed $data, ?int $last_modified = null): never
+	public static function Output(mixed $data, ?int $last_modified = null): never
 	{
 		if (is_int($last_modified)) {
 			header('Last-Modified: ' . date('r', $last_modified));
@@ -107,7 +107,7 @@ class API
 		}
 		Json::Output($data);
 	}
-	static public function Error(int $code = 500, ?string $message = null, ?int $message_id = null): never
+	public static function Error(int $code = 500, ?string $message = null, ?int $message_id = null): never
 	{
 		http_response_code($code);
 		self::Output([
@@ -116,7 +116,7 @@ class API
 			'code' => $message_id ?? $code,
 		]);
 	}
-	static public function _ErrorHandler(): void
+	public static function _ErrorHandler(): void
 	{
 		set_error_handler(function ($errno, $errstr, $errfile, $errline) {
 			$errtype = match ($errno) {
