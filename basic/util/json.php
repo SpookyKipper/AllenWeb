@@ -4,6 +4,10 @@ namespace Allen\Basic\Util;
 
 class Json
 {
+	static public function Validate(string $json): bool
+	{
+		return json_validate($json);
+	}
 	static public function Encode(mixed $data, bool $pretty = false): string
 	{
 		return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | ($pretty ? JSON_PRETTY_PRINT : 0));
