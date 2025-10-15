@@ -32,6 +32,7 @@ class CarouselItem extends Div
 				],
 				style: [
 					'--carousel-bg' => "url('{$this->BackgroundGet()}')",
+					'--carousel-bg-opacity' => $this->BackgroundOpacityGet() ?? 1,
 				]
 			))->Render();
 		}

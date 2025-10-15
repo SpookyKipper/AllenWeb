@@ -36,6 +36,7 @@ class CarouselItemA extends A
 				],
 				style: [
 					'--carousel-bg' => "url('{$this->BackgroundGet()}')",
+					'--carousel-bg-opacity' => $this->BackgroundOpacityGet() ?? 1,
 				]
 			))->Render();
 		}
