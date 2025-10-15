@@ -2,8 +2,7 @@
 
 namespace Allen\Basic\Element\Custom;
 
-use Allen\Basic\Element\Div;
-use Allen\Basic\Element\Span;
+use Allen\Basic\Element\{Div, Span};
 
 class CarouselTitle extends Div
 {

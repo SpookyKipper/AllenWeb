@@ -2,9 +2,7 @@
 
 namespace Allen\Basic\Element\Custom;
 
-use Allen\Basic\Element\Button;
-use Allen\Basic\Element\Div;
-use Allen\Basic\Element\Span\Symbol;
+use Allen\Basic\Element\{Button, Div, Span\Symbol};
 
 class CarouselController extends Div
 {
