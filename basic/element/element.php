@@ -42,7 +42,7 @@ class Element
 	/**
 	 * 取得內容
 	 */
-	public function ContentGet(): ?string
+	public function ContentGet(): string
 	{
 		return $this->content;
 	}
