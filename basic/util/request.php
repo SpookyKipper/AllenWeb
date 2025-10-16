@@ -11,10 +11,12 @@ class Request
 	 * 請求
 	 * @param string|null $url 請求的 URL
 	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent，預設為 Config::Get('util.request.ua') 或不設定
 	 */
 	public function __construct(
 		?string $url = null,
 		protected array $header = [],
+		protected ?string $ua = null,
 	) {
 		if ($url !== null) {
 			$this->url = $url;
@@ -65,6 +67,26 @@ class Request
 		return $this;
 	}
 	/**
+	 * 取得 User-Agent
+	 * @return string|null
+	 */
+	public function UaGet(): ?string
+	{
+		if ($this->ua !== null) {
+			return $this->ua;
+		}
+		return Config::Get('util.request.ua');
+	}
+	/**
+	 * 設定 User-Agent
+	 * @param string|null $ua User-Agent
+	 */
+	public function UaSet(?string $ua): self
+	{
+		$this->ua = $ua;
+		return $this;
+	}
+	/**
 	 * 執行 GET 請求
 	 * @return array{code: int, response: mixed, header: array<string, string[]>}
 	 */
@@ -108,6 +130,7 @@ class Request
 		$header = array_values(array_map(function ($key, $value) {
 			return $key . ': ' . $value;
 		}, array_keys($header), $header));
+		$ua = $this->UaGet();
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->UrlGet());
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -117,6 +140,7 @@ class Request
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+		if (!is_null($ua)) curl_setopt($ch, CURLOPT_USERAGENT, $ua);
 		return $ch;
 	}
 	/**
