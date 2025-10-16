@@ -37,10 +37,11 @@ class Config
 	{
 		return self::$config_replace[$key] ?? self::$config[$key] ?? $default;
 	}
-	public static function Set(string $key, mixed $value = null, bool $replace = false, bool $is_add = false, ?string $path = null): void
+	public static function Set(string $key, mixed $value = null, bool $replace = false, bool $is_add = false, null|string|array $path = null): void
 	{
-		if (!is_null($path) && (!isset($_SERVER['REQUEST_URI']) || !str_starts_with($_SERVER['REQUEST_URI'], $path))) {
-			return;
+		if (!is_null($path)) {
+			if (is_string($path)) $path = [$path];
+			if (!in_array(true, array_map(fn($p) => str_starts_with($_SERVER['REQUEST_URI'], $p), $path))) return;
 		}
 		$value_type = gettype($value);
 		if (self::CheckType($key, $value_type) === false) {
