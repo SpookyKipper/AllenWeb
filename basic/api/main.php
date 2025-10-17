@@ -119,6 +119,9 @@ class API
 	public static function _ErrorHandler(): void
 	{
 		set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+			if (!(error_reporting() & $errno)) {
+				return false;
+			}
 			$errtype = match ($errno) {
 				E_ERROR => 'Fatal Error',
 				E_WARNING => 'Warning',
@@ -127,11 +130,11 @@ class API
 				E_DEPRECATED => 'Deprecated Notice',
 				default => 'Unknown Error',
 			};
-			if ($errtype === 'Warning' || $errtype === 'Notice') {
+			if ($errtype === 'Notice') {
 				return true;
 			}
 			self::Error(500, "Server Error. Please try again later.\n$errtype $errstr ($errfile:$errline)");
 		}, E_ALL);
-		error_reporting(0);
+		error_reporting(E_ALL);
 	}
 }
