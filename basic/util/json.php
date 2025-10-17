@@ -30,10 +30,10 @@ class Json
 			}
 		}
 		if ($etag) {
-			$sha1 = sha1($output);
-			header('ETag: "' . $sha1 . '"');
+			$etag_value = '"' . sha1($output) . '"';
+			header('ETag: ' . $etag_value);
 			$if_none_match = Server::GetHeader('If-None-Match');
-			if (is_string($if_none_match) && $if_none_match === $sha1) {
+			if (is_string($if_none_match) && $if_none_match === $etag_value) {
 				http_response_code(304);
 				exit;
 			}
