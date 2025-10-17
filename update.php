@@ -27,7 +27,7 @@ if ($return_var !== 0) {
 	echo 'Successfully pulled in main folder: ' . implode(PHP_EOL, $output) . PHP_EOL;
 }
 echo 'Updating dependencies with Composer...' . PHP_EOL;
-exec('composer install --no-dev --optimize-autoloader', $output, $return_var);
+exec('composer install --no-dev' . (in_array('--optimize-autoloader', $argv) ? ' --optimize-autoloader' : ''), $output, $return_var);
 if ($return_var !== 0) {
 	echo 'Error updating dependencies: ' . implode(PHP_EOL, $output) . PHP_EOL;
 } else {
