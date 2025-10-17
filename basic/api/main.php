@@ -100,17 +100,9 @@ class API
 		}
 		return $data;
 	}
-	public static function Output(mixed $data, ?int $last_modified = null): never
+	public static function Output(mixed $data, bool $pretty = false, bool $etag = true, ?int $last_modified = null): never
 	{
-		if (is_int($last_modified)) {
-			header('Last-Modified: ' . date('r', $last_modified));
-			$if_modified_since_header = self::InputHeader('If-Modified-Since', false);
-			if (is_string($if_modified_since_header) && strtotime($if_modified_since_header) >= $last_modified) {
-				http_response_code(304);
-				exit;
-			}
-		}
-		Json::Output($data);
+		Json::Output(data: $data, pretty: $pretty, etag: $etag, last_modified: $last_modified);
 	}
 	public static function Error(int $code = 500, ?string $message = null, ?int $message_id = null): never
 	{
