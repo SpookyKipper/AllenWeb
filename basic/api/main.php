@@ -55,6 +55,10 @@ class API
 			namespace_prefix: $namespace_prefix,
 		);
 	}
+	public static function HasQuery(string $query): bool
+	{
+		return isset($_REQUEST[$query]);
+	}
 	public static function InputHeader(?string $header = null, bool $required = true): array|string|null
 	{
 		if (is_null($header)) {
