@@ -132,5 +132,6 @@ class API
 			}
 			self::Error(500, "Server Error. Please try again later.\n$errtype $errstr ($errfile:$errline)");
 		}, E_ALL);
+		error_reporting(0);
 	}
 }
