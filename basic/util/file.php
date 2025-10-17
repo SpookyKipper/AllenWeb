@@ -314,32 +314,32 @@ class File
 	}
 	protected function SendHeader_ContentType(): self
 	{
-		header('Content-Type: ' . ($this->ContentTypeGet() ?? 'application/octet-stream'));
+		Header::SetContentType($this->ContentTypeGet() ?? 'application/octet-stream');
 		return $this;
 	}
 	protected function SendHeader_Download(): self
 	{
-		header('Content-Disposition: ' . ($this->DownloadGet() ? 'attachment' : 'inline') . ($this->DownloadNameGet() ? '; filename="' . $this->DownloadNameGet() . '"' : ''));
+		Header::ContentDisposition($this->DownloadGet(), $this->DownloadNameGet());
 		return $this;
 	}
 	protected function SendHeader_CacheControl(): self
 	{
 		$cc = $this->CacheControlGet();
-		if ($cc === true) header('Cache-Control: public, max-age=31536000, must-revalidate');
-		else if ($cc === false) header('Cache-Control: no-cache, no-store, must-revalidate');
-		else header('Cache-Control: private, max-age=86400, must-revalidate');
+		Header::Set(
+			'Cache-Control',
+			(is_null($cc)
+				? 'private, max-age=86400, must-revalidate'
+				: ($cc
+					? 'public, max-age=31536000, must-revalidate'
+					: 'no-cache, no-store, must-revalidate'
+				)
+			)
+		);
 		return $this;
 	}
 	protected function SendHeader_LastModified(): self
 	{
-		if ($this->last_modified !== null) {
-			header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $this->last_modified) . ' GMT');
-			$if_modified_since = Server::GetHeader('If-Modified-Since');
-			if ($if_modified_since !== null && strtotime($if_modified_since) >= $this->last_modified) {
-				http_response_code(304);
-				exit;
-			}
-		}
+		Header::SetLastModified($this->last_modified);
 		return $this;
 	}
 	protected function SendHeader(): self
@@ -376,8 +376,8 @@ class File
 				header('Content-Range: bytes ' . $this->range . '-' . ($this->range + $this->partial_size - 1) . '/' . $this->size);
 			}
 			$this->partial_size ??= $this->size;
-			header('Accept-Ranges: bytes');
-			header('Content-Length: ' . $this->partial_size);
+			Header::SetAcceptRanges('bytes');
+			Header::SetContentLength($this->partial_size);
 		}
 		return $this;
 	}
