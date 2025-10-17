@@ -34,3 +34,4 @@ if ($return_var !== 0) {
 	echo 'Successfully updated dependencies: ' . implode(PHP_EOL, $output) . PHP_EOL;
 }
 echo "Done." . PHP_EOL;
+exit(0);
