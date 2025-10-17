@@ -14,11 +14,15 @@ class RequestCache extends Request
 		string $cacheId,
 		int $cacheExpire = 0,
 		?string $url = null,
-		array $header = []
+		?string $data = null,
+		array $header = [],
+		?string $ua = null,
 	) {
 		parent::__construct(
 			url: $url,
+			data: $data,
 			header: $header,
+			ua: $ua,
 		);
 		$this->cache_class = new Cache($cacheId, expire: $cacheExpire);
 		if ($this->cache_class->Exist()) {
@@ -28,7 +32,7 @@ class RequestCache extends Request
 			}
 		}
 	}
-	protected function _CurlEnd(CurlHandle $ch): array
+	public function _CurlEnd(CurlHandle $ch)
 	{
 		if ($this->cache !== null && $this->cache_class->IsValid() === true) {
 			return $this->cache;

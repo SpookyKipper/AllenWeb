@@ -10,11 +10,13 @@ class Request
 	/**
 	 * 請求
 	 * @param string|null $url 請求的 URL
+	 * @param string|null $data 請求的資料
 	 * @param array<string, string|null> $header 請求的 Header
 	 * @param string|null $ua 使用的 User-Agent，預設為 Config::Get('util.request.ua') 或不設定
 	 */
 	public function __construct(
 		?string $url = null,
+		protected ?string $data = null,
 		protected array $header = [],
 		protected ?string $ua = null,
 	) {
@@ -37,6 +39,22 @@ class Request
 	public function UrlSet(string $url): self
 	{
 		$this->url = $url;
+		return $this;
+	}
+	/**
+	 * 取得請求資料
+	 */
+	public function DataGet(): ?string
+	{
+		return $this->data;
+	}
+	/**
+	 * 設定請求資料
+	 * @param string|null $data 請求的資料
+	 */
+	public function DataSet(?string $data): self
+	{
+		$this->data = $data;
 		return $this;
 	}
 	/**
@@ -88,51 +106,149 @@ class Request
 	}
 	/**
 	 * 執行 GET 請求
-	 * @return array{code: int, response: mixed, header: array<string, string[]>}
+	 * @param string|null $url 請求的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
 	 */
-	public function GET(): array
-	{
-		$ch = $this->_CurlStart();
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		return $this->_CurlEnd($ch);
+	public function GET(
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	) {
+		return $this->_CurlEnd($this->_CurlGET(
+			url: $url,
+			header: $header,
+			ua: $ua,
+		));
 	}
 	/**
 	 * 執行 POST 請求
 	 * @param string|null $data 上傳的資料
-	 * @return array{code: int, response: mixed, header: array<string, string[]>}
+	 * @param string|null $url 請求的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
 	 */
-	public function POST(?string $data = null): array
-	{
-		$ch = $this->_CurlStart();
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		return $this->_CurlEnd($ch);
+	public function POST(
+		?string $data = null,
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	) {
+		return $this->_CurlEnd($this->_CurlPOST(
+			data: $data,
+			url: $url,
+			header: $header,
+			ua: $ua,
+		));
 	}
 	/**
 	 * 執行 PUT 請求
 	 * @param string|null $data 上傳的資料
-	 * @return array{code: int, response: mixed, header: array<string, string[]>}
+	 * @param string|null $url 請求的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
 	 */
-	public function PUT(?string $data = null)
-	{
-		$ch = $this->_CurlStart();
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		return $this->_CurlEnd($ch);
+	public function PUT(
+		?string $data = null,
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	) {
+		return $this->_CurlEnd($this->_CurlPUT(
+			data: $data,
+			url: $url,
+			header: $header,
+			ua: $ua,
+		));
+	}
+	/**
+	 * 初始化 GET 請求
+	 * @param string|null $url 請求的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
+	 */
+	public function _CurlGET(
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	): CurlHandle {
+		$ch = $this->_CurlStart(
+			method: 'GET',
+			url: $url,
+			header: $header,
+			ua: $ua,
+		);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+		return $ch;
+	}
+	/**
+	 * 初始化 POST 請求
+	 * @param string|null $data 上傳的資料
+	 * @param string|null $url 請求的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
+	 */
+	public function _CurlPOST(
+		?string $data = null,
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	): CurlHandle {
+		$ch = $this->_CurlStart(
+			method: 'POST',
+			data: $data,
+			url: $url,
+			header: $header,
+			ua: $ua,
+		);
+		return $ch;
+	}
+	/**
+	 * 初始化 PUT 請求
+	 * @param string|null $data 上傳的資料
+	 * @param string|null $url 請求的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
+	 */
+	public function _CurlPUT(
+		?string $data = null,
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	): CurlHandle {
+		$ch = $this->_CurlStart(
+			method: 'PUT',
+			data: $data,
+			url: $url,
+			header: $header,
+			ua: $ua,
+		);
+		return $ch;
 	}
 	/**
 	 * 初始化 Curl 請求
-	 * @return CurlHandle
+	 * @param string|null $method 請求方法，若為 null 則不設定
+	 * @param string|null $data 上傳的資料
+	 * @param string|null $url 請求的 URL，若為 null 則使用物件內的 URL
+	 * @param array<string, string|null> $header 請求的 Header
+	 * @param string|null $ua 使用的 User-Agent
 	 */
-	protected function _CurlStart(): CurlHandle
-	{
-		$header = $this->HeaderGet();
+	public function _CurlStart(
+		?string $method = null,
+		?string $data = null,
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	): CurlHandle {
+		$header = array_filter(array_merge($this->HeaderGet(), $header));
 		$header = array_values(array_map(function ($key, $value) {
 			return $key . ': ' . $value;
 		}, array_keys($header), $header));
-		$ua = $this->UaGet();
+		$data ??= $this->DataGet();
+		$url ??= $this->UrlGet();
+		$ua ??= $this->UaGet();
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->UrlGet());
+		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 		curl_setopt($ch, CURLOPT_ENCODING, '');
@@ -140,6 +256,8 @@ class Request
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+		if (!is_null($method)) curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 		if (!is_null($ua)) curl_setopt($ch, CURLOPT_USERAGENT, $ua);
 		return $ch;
 	}
@@ -148,7 +266,7 @@ class Request
 	 * @param CurlHandle $ch
 	 * @return array{code: int, response: mixed, header: array<string, string[]>}
 	 */
-	protected function _CurlEnd(CurlHandle $ch): array
+	public function _CurlEnd(CurlHandle $ch)
 	{
 		$headers = [];
 		curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$headers) {
@@ -165,6 +283,10 @@ class Request
 			$headers[$name][] = $value;
 			return $len;
 		});
+		return self::_CurlReturn(
+			ch: $ch,
+			headers: $headers,
+		);
 		$response = curl_exec($ch);
 		$error = curl_error($ch);
 		if (!empty($error) && $response === false) {
@@ -184,5 +306,85 @@ class Request
 			'response' => $response,
 			'header' => $headers,
 		];
+	}
+	protected static function _CurlReturn(CurlHandle $ch, array &$headers, null|string|bool $response = null)
+	{
+		$response ??= curl_exec($ch);
+		$error = curl_error($ch);
+		if (!empty($error) && $response === false) {
+			$code = 0;
+			$response = [
+				'error' => $error,
+			];
+		} else {
+			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if (json_validate($response)) {
+				$response = json_decode($response, true);
+			}
+		}
+		curl_close($ch);
+		return [
+			'code' => $code,
+			// 'response' => $response,
+			'header' => $headers,
+		];
+	}
+	/**
+	 * 同時執行多個請求
+	 * @param array<string|int, Request> $get GET 請求陣列
+	 * @param array<string|int, Request> $post POST 請求陣列
+	 * @param array<string|int, Request> $put PUT 請求陣列
+	 */
+	public static function Multi(
+		array $get = [],
+		array $post = [],
+		array $put = [],
+	) {
+		$get = array_map(fn($v) => $v->_CurlGET(), array_filter($get, fn($v) => $v instanceof Request));
+		$post = array_map(fn($v) => $v->_CurlPOST(), array_filter($post, fn($v) => $v instanceof Request));
+		$put = array_map(fn($v) => $v->_CurlPUT(), array_filter($put, fn($v) => $v instanceof Request));
+		$chs = array_merge($get, $post, $put);
+		$mh = curl_multi_init();
+		$headers = [];
+		foreach ($chs as $key => $ch) {
+			$headers[$key] = [];
+			curl_setopt($ch, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$headers, $key) {
+				$len = strlen($header);
+				$pos = strpos($header, ':');
+				if ($pos === false) {
+					return $len;
+				}
+				$name = strtolower(substr($header, 0, $pos));
+				$value = trim(substr($header, $pos + 1));
+				if (!array_key_exists($name, $headers[$key])) {
+					$headers[$key][$name] = [];
+				}
+				$headers[$key][$name][] = $value;
+				return $len;
+			});
+			curl_multi_add_handle($mh, $ch);
+		}
+		$active = null;
+		do {
+			$mrc = curl_multi_exec($mh, $active);
+		} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+		while ($active && $mrc == CURLM_OK) {
+			if (curl_multi_select($mh) !== -1) {
+				do {
+					$mrc = curl_multi_exec($mh, $active);
+				} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+			}
+		}
+		$results = [];
+		foreach ($chs as $key => $ch) {
+			$results[$key] = self::_CurlReturn(
+				ch: $ch,
+				headers: $headers[$key],
+				response: curl_multi_getcontent($ch) ?? false,
+			);
+			curl_multi_remove_handle($mh, $ch);
+		}
+		curl_multi_close($mh);
+		return $results;
 	}
 }

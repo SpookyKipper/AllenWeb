@@ -1,7 +1,7 @@
 <?php
 // 在各個子資料夾執行 git pull
 $folders = [
-	'api',
+	'apis',
 	'id',
 	'xhost/dash',
 ];

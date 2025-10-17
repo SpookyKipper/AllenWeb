@@ -16,18 +16,33 @@ class RequestStream extends Request
 	 */
 	public function __construct(
 		?string $url = null,
+		?string $data = null,
 		array $header = [],
+		?string $ua = null,
 		?callable $callback = null,
 	) {
 		parent::__construct(
 			url: $url,
+			data: $data,
 			header: $header,
+			ua: $ua,
 		);
 		$this->callback = $callback;
 	}
-	protected function _CurlStart(): CurlHandle
-	{
-		$ch = parent::_CurlStart();
+	public function _CurlStart(
+		?string $method = null,
+		?string $data = null,
+		?string $url = null,
+		array $header = [],
+		?string $ua = null,
+	): CurlHandle {
+		$ch = parent::_CurlStart(
+			method: $method,
+			data: $data,
+			url: $url,
+			header: $header,
+			ua: $ua,
+		);
 		if (is_callable($this->callback)) {
 			curl_setopt($ch, CURLOPT_WRITEFUNCTION, function ($ch, $data) {
 				@($this->callback)($ch, $data);
