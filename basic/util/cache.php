@@ -3,6 +3,7 @@
 namespace Allen\Basic\Util;
 
 use Allen\Basic\Path;
+use Throwable;
 
 class Cache
 {
@@ -26,9 +27,9 @@ class Cache
 			return null;
 		}
 		try {
-			$data = json_decode(file_get_contents($this->path . $this->id . '.json'), true);
+			$data = Json::Decode(file_get_contents($this->path . $this->id . '.json'), true);
 			return is_array($data) ? $data : null;
-		} catch (\Throwable $e) {
+		} catch (Throwable $e) {
 			return null;
 		}
 	}
@@ -63,9 +64,9 @@ class Cache
 			}
 			$this->data = $data;
 			$this->data['expire'] = $this->expire === 0 ? 0 : time() + $this->expire;
-			file_put_contents($this->path . $this->id . '.json', json_encode($this->data));
+			file_put_contents($this->path . $this->id . '.json', Json::Encode($this->data));
 			return true;
-		} catch (\Throwable $e) {
+		} catch (Throwable $e) {
 			return false;
 		}
 	}
@@ -77,7 +78,7 @@ class Cache
 		try {
 			unlink($this->path . $this->id . '.json');
 			return true;
-		} catch (\Throwable $e) {
+		} catch (Throwable $e) {
 			return false;
 		}
 	}

@@ -27,9 +27,8 @@ class RequestCache extends Request
 		$this->cache_class = new Cache($cacheId, expire: $cacheExpire);
 		if ($this->cache_class->Exist()) {
 			$this->cache = $this->cache_class->Get(force: true);
-			if (isset($this->cache['header'][0]['last-modified']) && is_string($this->cache['header'][0]['last-modified'])) {
-				$this->HeaderAdd('If-Modified-Since', $this->cache['header'][0]['last-modified']);
-			}
+			if (isset($this->cache['header'][0]['last-modified']) && is_string($this->cache['header'][0]['last-modified'])) $this->HeaderAdd('If-Modified-Since', $this->cache['header'][0]['last-modified']);
+			if (isset($this->cache['header'][0]['etag']) && is_string($this->cache['header'][0]['etag'])) $this->HeaderAdd('If-None-Match', $this->cache['header'][0]['etag']);
 		}
 	}
 	public function _CurlEnd(CurlHandle $ch)
