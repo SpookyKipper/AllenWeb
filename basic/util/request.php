@@ -325,7 +325,7 @@ class Request
 		curl_close($ch);
 		return [
 			'code' => $code,
-			// 'response' => $response,
+			'response' => $response,
 			'header' => $headers,
 		];
 	}
