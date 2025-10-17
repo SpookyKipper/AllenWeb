@@ -3,6 +3,7 @@
 namespace Allen\Basic;
 
 use Allen\Basic\Util\{Json, Server};
+use Throwable;
 
 class API
 {
@@ -136,5 +137,8 @@ class API
 			self::Error(500, "Server Error. Please try again later.\n$errtype $errstr ($errfile:$errline)");
 		}, E_ALL);
 		error_reporting(E_ALL);
+		set_exception_handler(function (Throwable $exception) {
+			self::Error(500, 'Server Error. Please try again later.' . PHP_EOL . $exception->getMessage() . ' (' . $exception->getFile() . ':' . $exception->getLine() . ')');
+		});
 	}
 }
