@@ -20,7 +20,7 @@ class Server
 	}
 	public static function GetDomain(?string $domain = null, bool $idn = true): ?string
 	{
-		$domain ??= $_SERVER['HTTP_HOST'];
+		$domain ??= $_SERVER['HTTP_HOST'] ?? null;
 		if (is_null($domain)) return null;
 		return $idn ? idn_to_utf8($domain) : $domain;
 	}
