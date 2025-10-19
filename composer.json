@@ -6,6 +6,7 @@
         "renoki-co/l1": "^0.1.0",
         "spomky-labs/otphp": "^11.3",
         "mpdf/mpdf": "^8.2",
-        "sabre/dav": "^4.7"
+        "sabre/dav": "^4.7",
+        "io-developer/php-whois": "^4.1"
     }
 }
