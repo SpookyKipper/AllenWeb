@@ -34,9 +34,17 @@ class GitHub
 		$header['User-Agent'] = 'AS_Allen_Shih-GH/1.1';
 		$header['X-GitHub-Api-Version'] = '2022-11-28';
 		if (is_null($cacheId)) {
-			return new Request('https://api.github.com' . $path, $header);
+			return new Request(
+				url: 'https://api.github.com' . $path,
+				header: $header,
+			);
 		}
-		return new RequestCache($cacheId, $cacheExpire, 'https://api.github.com' . $path, $header);
+		return new RequestCache(
+			cacheId: $cacheId,
+			cacheExpire: $cacheExpire,
+			url: 'https://api.github.com' . $path,
+			header: $header,
+		);
 	}
 	public function GetRepoContent(string $owner, string $repo, string $path = '', ?string $cacheId = null, int $cacheExpire = 0): array|bool
 	{
