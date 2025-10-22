@@ -58,4 +58,12 @@ class SSE
 			aborted_exit: $aborted_exit,
 		);
 	}
+	public static function SendDataJson(mixed $data, ?string $event = null, bool $aborted_exit = false): void
+	{
+		self::SendData(
+			data: Json::Encode($data),
+			event: $event,
+			aborted_exit: $aborted_exit,
+		);
+	}
 }
