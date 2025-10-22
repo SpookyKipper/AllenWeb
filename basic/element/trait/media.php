@@ -4,6 +4,7 @@ namespace Allen\Basic\Element\Trait;
 
 trait Media
 {
+	use Element;
 	public function MediaGet(): ?string
 	{
 		return $this->AttributeGet('media');

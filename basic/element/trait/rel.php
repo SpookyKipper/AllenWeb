@@ -6,6 +6,7 @@ use Allen\Basic\Element\Enum\Rel as EnumRel;
 
 trait Rel
 {
+	use Element;
 	public function RelGet(): ?EnumRel
 	{
 		$rel = $this->AttributeGet('rel');

@@ -4,6 +4,7 @@ namespace Allen\Basic\Element\Trait;
 
 trait AllowFullscreen
 {
+	use Element;
 	public function AllowfullscreenGet(): ?string
 	{
 		return $this->AttributeHas('allowfullscreen');

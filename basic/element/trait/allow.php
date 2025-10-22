@@ -6,6 +6,7 @@ use Allen\Basic\Element\Enum\Allow as EnumAllow;
 
 trait Allow
 {
+	use Element;
 	public function AllowGet(bool $returnNull = true): ?array
 	{
 		return $this->_AttributeKeyToArray(

@@ -6,6 +6,7 @@ use Allen\Basic\Element\Enum\ButtonType as EnumButtonType;
 
 trait ButtonType
 {
+	use Element;
 	public function TypeGet(): ?EnumButtonType
 	{
 		$type = $this->AttributeGet('type');

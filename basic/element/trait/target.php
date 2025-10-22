@@ -6,6 +6,7 @@ use Allen\Basic\Element\Enum\Target as EnumTarget;
 
 trait Target
 {
+	use Element;
 	public function TargetGet(): ?EnumTarget
 	{
 		$target = $this->AttributeGet('target');
