@@ -20,9 +20,6 @@ class SSE
 		@header('X-Accel-Buffering: no');
 		@header('Cache-Control: no-cache');
 		@header('Connection: keep-alive');
-	}
-	public static function Header(): void
-	{
 		@header('Content-Type: text/event-stream');
 	}
 	public static function Encode(self $sse): string
