@@ -25,7 +25,7 @@ class Header
 	}
 	public static function Set(string $name, string $value, bool $replace = true): void
 	{
-		header($name . ': ' . $value, $replace);
+		@header($name . ': ' . $value, $replace);
 	}
 	public static function SetContentType(string $type, ?string $charset = 'utf-8'): void
 	{
