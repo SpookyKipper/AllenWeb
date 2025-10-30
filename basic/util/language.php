@@ -112,6 +112,7 @@ class Language
 				];
 			}
 		}
+		usort($lang_support, fn($a, $b) => (array_search($a, array_keys(self::LANGS)) ?: \PHP_INT_MAX) <=> (array_search($b, array_keys(self::LANGS)) ?: \PHP_INT_MAX));
 		self::$lang_support = $lang_support;
 	}
 	/**
