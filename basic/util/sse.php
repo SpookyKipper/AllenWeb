@@ -16,7 +16,7 @@ class SSE
 		ini_set('output_buffering', 'off');
 		ini_set('zlib.output_compression', 'off');
 		header('X-Accel-Buffering: no');
-		header('Cache-Control: no-cache');
+		header('Cache-Control: no-cache, no-transform');
 		header('Connection: keep-alive');
 		header('Content-Type: text/event-stream; charset=utf-8');
 		while (ob_get_level() > 0) {
