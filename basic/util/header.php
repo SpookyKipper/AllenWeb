@@ -23,6 +23,26 @@ class Header
 	{
 		self::SetETag('"' . sha1($data) . '"');
 	}
+	public static function CacheControl(
+		?bool $public = null,
+		?bool $no_cache = null,
+		?bool $no_store = null,
+		?int $max_age = null,
+		?bool $must_revalidate = null,
+	): void {
+		$directives = [];
+		if ($no_cache ?? Config::Get('util.header.cache_control.no_cache', false)) $directives[] = 'no-cache';
+		if ($no_store ?? Config::Get('util.header.cache_control.no_store', false)) {
+			$directives[] = 'no-store';
+			self::SetCacheControl(...$directives);
+			return;
+		}
+		if ($public ?? Config::Get('util.header.cache_control.public', false)) $directives[] = 'public';
+		else $directives[] = 'private';
+		$directives[] = 'max-age=' . strval($max_age ?? Config::Get('util.header.cache_control.max_age', 0));
+		if ($must_revalidate ?? Config::Get('util.header.cache_control.must_revalidate', true)) $directives[] = 'must-revalidate';
+		self::SetCacheControl(...$directives);
+	}
 	public static function Set(string $name, string $value, bool $replace = true): void
 	{
 		@header($name . ': ' . $value, $replace);
@@ -61,5 +81,13 @@ class Header
 	public static function SetAcceptRanges(string $unit = 'none'): void
 	{
 		self::Set('Accept-Ranges', $unit);
+	}
+	public static function SetCacheControl(string ...$value): void
+	{
+		self::Set('Cache-Control', implode(', ', $value));
+	}
+	public static function SetVary(string ...$value): void
+	{
+		self::Set('Vary', implode(', ', $value));
 	}
 }

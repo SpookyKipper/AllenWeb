@@ -37,8 +37,23 @@ class Language
 			$lang_support = self::GetSupport();
 			if (!empty($lang_support)) {
 				if (isset($_REQUEST['lang'])) {
+					$uri = Uri::Parse($_SERVER['REQUEST_URI']);
+					if ($_REQUEST['lang'] === 'auto' && $accept_language = Server::GetHeader('Accept-Language')) {
+						$accept = [];
+						foreach (explode(',', $accept_language) as $part) {
+							$subparts = explode(';q=', trim($part));
+							$accept[$subparts[0]] = isset($subparts[1]) ? @floatval($subparts[1]) : 1.0;
+						}
+						arsort($accept);
+						foreach (array_keys($accept) as $al) {
+							$lang_find = self::GetSelect($lang_support, $al);
+							if (!is_null($lang_find) && self::Set($lang_find)) {
+								header('Location: ' . ($lang_find === Config::Get('util.language.default', 'zh-Hant-TW') ? $uri->RemoveQuery('lang') : $uri->AddQuery('lang', $lang_find))->Get());
+								die();
+							}
+						}
+					}
 					if (!is_string($_REQUEST['lang']) || $_REQUEST['lang'] === Config::Get('util.language.default', 'zh-Hant-TW') || !self::Set($_REQUEST['lang'])) {
-						$uri = Uri::Parse($_SERVER['REQUEST_URI']);
 						header('Location: ' . $uri->RemoveQuery('lang')->Get());
 						die();
 					}
@@ -105,7 +120,7 @@ class Language
 	 * @param string|null $current 目前語言，預設為 self::Get() 的結果
 	 * @return string|null 選擇的語言，若語言清單為空則回傳 null
 	 */
-	public static function GetSelect(array $langs, ?string $current = null): ?string
+	public static function GetSelect(array $langs, ?string $current = null, bool $final = true): ?string
 	{
 		$current ??= self::Get();
 		if (in_array($current, $langs)) {
@@ -116,12 +131,14 @@ class Language
 		$lang1 = array_filter($langs, fn($v) => str_starts_with($v, $lang_split[0]));
 		if (count($lang1) > 0) {
 			if (count($lang_split) > 1) {
-				$lang2 = array_filter($langs, fn($v) => str_starts_with($v, $lang_split[0] . '-' . $lang_split[1]));
+				$lang2 = array_filter($lang1, fn($v) => str_starts_with($v, $lang_split[0] . '-' . $lang_split[1]) || str_ends_with($v, '-' . $lang_split[1]));
 				if (count($lang2) > 0) {
 					return $lang2[array_key_first($lang2)];
 				}
 			}
 			return $lang1[array_key_first($lang1)];
+		} else if (!$final) {
+			return null;
 		}
 		$index = array_key_first($langs);
 		return $index !== null ? $langs[$index] : null;
