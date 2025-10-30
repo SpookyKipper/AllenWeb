@@ -17,6 +17,7 @@ class Web
 	): void {
 		global $title, $description;
 		if ($etag === true) ob_start(function (string $content) {
+			Header::ContentLength($content);
 			Header::ETag($content);
 			return $content;
 		});
