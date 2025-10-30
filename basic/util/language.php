@@ -99,7 +99,7 @@ class Language
 	 */
 	public static function SetSupport(string ...$langs): void
 	{
-		$lang_support = array_values(array_intersect($langs, array_keys(self::LANGS)));
+		$lang_support = array_values(array_intersect(array_keys(self::LANGS), $langs));
 		if (empty($lang_support)) {
 			$config = Config::Get('util.language.default', 'zh-Hant-TW');
 			if (array_key_exists($config, self::LANGS)) {
@@ -112,7 +112,6 @@ class Language
 				];
 			}
 		}
-		usort($lang_support, fn($a, $b) => (array_search($a, array_keys(self::LANGS)) ?: \PHP_INT_MAX) <=> (array_search($b, array_keys(self::LANGS)) ?: \PHP_INT_MAX));
 		self::$lang_support = $lang_support;
 	}
 	/**
