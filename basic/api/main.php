@@ -13,6 +13,7 @@ class API
 		?string $namespace_prefix = 'Allen\\apis',
 		bool $error_handler = true,
 	): void {
+		self::$is_api = true;
 		if ($error_handler) {
 			self::_ErrorHandler();
 		}
@@ -112,6 +113,11 @@ class API
 			'error' => $message ?? true,
 			'code' => $message_id ?? $code,
 		]);
+	}
+	protected static bool $is_api = false;
+	public static function IsAPI(): bool
+	{
+		return self::$is_api;
 	}
 	public static function _ErrorHandler(): void
 	{
